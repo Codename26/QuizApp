@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#988b8b"
+    tools:context="com.codename26.quizapplication.WrongActivity">
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3783355790760246/7288472201">
+    </com.google.android.gms.ads.AdView>
+
+    <TextView
+        android:id="@+id/textViewScoreTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="64dp"
+        android:textColor="@color/white_text"
+        android:textSize="@dimen/title_text_size"/>
+
+    <TextView
+        android:id="@+id/textViewScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewScoreTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/white_text"
+
+        android:textSize="@dimen/title_text_size"
+        android:text="TextView"/>
+
+    <TextView
+        android:id="@+id/textViewHighscoreTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewScore"
+        android:layout_marginTop="40dp"
+        android:textColor="@color/white_text"
+
+        android:layout_centerHorizontal="true"
+        android:textSize="@dimen/title_text_size"
+        android:text="TextView"/>
+
+    <TextView
+        android:id="@+id/textViewHighscore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewHighscoreTitle"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/white_text"
+        android:layout_centerHorizontal="true"
+        android:textSize="@dimen/title_text_size"
+        android:text="TextView"/>
+
+    <Button
+        android:id="@+id/buttonRestart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/adView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="64dp"
+        android:textSize="@dimen/button_text_size"
+        android:text="@string/restart"
+        android:textColor="@color/white_text"
+        android:background="@drawable/round_corners_background"
+        android:padding="12dp"
+        android:onClick="restartListener"/>
+</RelativeLayout>

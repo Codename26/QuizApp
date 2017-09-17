@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Quiz Application</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title">Что гуглят больше?</string>
+    <string name="restart">Заново</string>
+    <string name="preference_file_highscore">com.codename26.QuizGame.highscore</string>
+    <string name="highscore">Рекорд</string>
+    <string name="score">Ваш результат</string>
+    <string name="month">В месяц</string>
+</resources>

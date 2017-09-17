@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000"
+    tools:context="com.codename26.quizapplication.MainActivity">
+
+
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="@string/title"
+        android:textSize="@dimen/app_title_text_size"
+        android:textColor="@color/white_text"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/textHighScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linearLayout"
+        android:layout_toLeftOf="@+id/textTitle"
+        android:layout_toStartOf="@+id/textTitle"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="4dp"
+        android:textSize="@dimen/app_title_text_size"
+        android:textColor="@color/white_text"
+        android:background="@drawable/round_corners_score"
+        android:text="7"/>
+    <TextView
+        android:id="@+id/textScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linearLayout"
+        android:layout_toEndOf="@+id/textTitle"
+        android:layout_toRightOf="@+id/textTitle"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="4dp"
+        android:textSize="@dimen/app_title_text_size"
+        android:textColor="@color/white_text"
+        android:background="@drawable/round_corners_score"
+        android:text="0"/>
+
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3783355790760246/7288472201">
+    </com.google.android.gms.ads.AdView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/linearLayout"
+        android:orientation="vertical"
+        android:layout_below="@id/textTitle"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_above="@id/adView">
+
+        <ImageView
+            android:id="@+id/imageViewTop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@raw/audi"
+            android:layout_marginBottom="4dp"
+            />
+
+        <ImageView
+            android:id="@+id/imageViewBottom"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@raw/audi"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+
+
+
+    <ImageView
+        android:id="@+id/imageViewVS"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_centerInParent="true"
+        app:srcCompat="@raw/versus"/>
+
+
+
+        <TextView
+            android:id="@+id/textImageTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/linearLayout"
+            android:layout_marginTop="64dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="4dp"
+            android:shadowColor="@color/text_shadow"
+            android:shadowDx="3.0"
+            android:shadowDy="3.0"
+            android:shadowRadius="1.1"
+            android:textColor="@color/white_text"
+            android:textSize="@dimen/title_text_size"
+            android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/textCounterTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textImageTop"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="4dp"
+        android:shadowColor="@color/text_shadow"
+        android:shadowDx="3.0"
+        android:shadowDy="3.0"
+        android:shadowRadius="1.1"
+        android:textColor="@color/white_text"
+        android:textSize="@dimen/app_title_text_size"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/textMonthCaptionTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/textCounterTop"
+        android:layout_marginBottom="8dp"
+        android:shadowColor="@color/text_shadow"
+        android:shadowDx="3.0"
+        android:shadowDy="3.0"
+        android:shadowRadius="1.1"
+        android:textColor="@color/white_text"
+        android:textSize="@dimen/app_title_text_size"
+        android:textStyle="bold"/>
+
+
+    <TextView
+        android:id="@+id/textImageBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/title_text_size"
+        android:layout_below="@id/imageViewVS"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/white_text"
+        android:shadowColor="@color/text_shadow"
+        android:shadowDx="3.0"
+        android:shadowDy="3.0"
+        android:shadowRadius="1.1"
+        android:textStyle="bold"
+        android:layout_marginTop="32dp"/>
+
+    <TextView
+        android:id="@+id/textCounterBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/textImageBottom"
+        android:layout_marginTop="4dp"
+        android:textSize="@dimen/app_title_text_size"
+        android:textColor="@color/white_text"
+        android:shadowColor="@color/text_shadow"
+        android:shadowDx="3.0"
+        android:shadowDy="3.0"
+        android:shadowRadius="1.1"
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:id="@+id/textMonthCaptionBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/textCounterBottom"
+        android:layout_marginTop="4dp"
+        android:textSize="@dimen/app_title_text_size"
+        android:textColor="@color/white_text"
+        android:shadowColor="@color/text_shadow"
+        android:shadowDx="3.0"
+        android:shadowDy="3.0"
+        android:shadowRadius="1.1"
+        android:textStyle="bold"/>
+
+</RelativeLayout>
