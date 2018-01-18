@@ -82,9 +82,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             initEndGame();
         }
     }
-
-    //Read info from DB to quizObjectTop
-
     //Init all views and first screen
     private void initGameField() {
         textScore = (TextView) findViewById(R.id.textScore);
@@ -98,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mTextViewCounterBottom = (TextView) findViewById(R.id.textCounterBottom);
         mTextMonthCaptionBottom = (TextView) findViewById(R.id.textMonthCaptionBottom);
         mTextMonthCaptionTop = (TextView) findViewById(R.id.textMonthCaptionTop);
+        imageVS = (ImageView) findViewById(R.id.imageViewVS);
 
         imageViewTop.setImageResource(quizObjectTop.getImageId());
         imageViewBottom.setImageResource(quizObjectBottom.getImageId());
@@ -141,7 +139,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                imageViewBottom.setImageResource(0);
                 imageViewBottom.setImageResource(quizObjectBottom.getImageId());
+                imageViewTop.setImageResource(0);
                 imageViewTop.setImageResource(quizObjectTop.getImageId());
 
                 anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.scale_from_0_to_1);
@@ -185,6 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                imageViewTop.setImageResource(0);
                 imageViewTop.setImageResource(quizObjectTop.getImageId());
 
                 anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.scale_from_0_to_1);
@@ -279,7 +280,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void animationCorrect() {
-        imageVS = (ImageView) findViewById(R.id.imageViewVS);
         Animation animCaption = AnimationUtils.loadAnimation(this, R.anim.scale);
 
         mTextMonthCaptionBottom.setText(R.string.month);
@@ -333,7 +333,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 //after wrong animation, we init. end game method
     private void animationWrong() {
-        imageVS = (ImageView) findViewById(R.id.imageViewVS);
+
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.scale_from_0_to_1);
         if (activeImage == ActiveImage.TOP) {
             mTextMonthCaptionBottom.setText(R.string.month);
