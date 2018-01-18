@@ -1,41 +1,25 @@
 package com.codename26.quizapplication;
 
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
-
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     public static final String HIGHSCORE_EXTRA = "com.codename26.quizapplication.extra.HIGHSCORE";
@@ -52,8 +36,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView mTextMonthCaptionBottom;
     private TextView textScore;
     private AdView mAdView;
-    private QuizObject object1;
-    private QuizObject object2;
+    private QuizObject quizObjectTop;
+    private QuizObject quizObjectBottom;
     private Animation anim;
     private DBHelper dbHelper;
     private SQLiteDatabase db;
@@ -65,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private enum ActiveImage {TOP, BOTTOM}
 
-    ;
+
     ActiveImage activeImage;
     private Handler mHandler = new Handler();
     private InterstitialAd mInterstitialAd;
@@ -78,15 +62,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         //Get Highscore from SharedPreferences
         sharedPref = this.getSharedPreferences(getString(R.string.preference_file_highscore), this.MODE_PRIVATE);
-
-
         dbHelper = new DBHelper(this);
-
-        object1 = new QuizObject();
-        object2 = new QuizObject();
         initDB();
-        readDB(object1);
-        readDB(object2);
         initGameField();
         initAds();
 
@@ -94,46 +71,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Get Writable DB or create new one and fill it with data
     private void initDB() {
-        db = dbHelper.getWritableDatabase();
+        dbHelper.getReadableDatabase();
+        quizObjectTop = dbHelper.readDB();
+        quizObjectBottom = dbHelper.readDB();
+       checkEndGame();
     }
 
-    //Read info from DB to quizObject
-    private void readDB(QuizObject quizObject) {
-
-        String selection = "wasShown < 1";
-        try {
-            c = db.query("quiztable", null, selection, null, null, null, null);
-
-            //Take random entry from DB, that hasn't been shown
-            try {
-                int randMax = c.getCount();
-                if (randMax > 0) {
-                    if (c.moveToPosition(new Random().nextInt(randMax))) {
-                        int idColIndex = c.getColumnIndex("id");
-                        int titleColIndex = c.getColumnIndex("title");
-                        int quantityColIndex = c.getColumnIndex("quantity");
-                        int pictureColIndex = c.getColumnIndex("picture");
-
-                        quizObject.setTitle(c.getString(titleColIndex));
-                        quizObject.setNumberOfSearchQueries(c.getInt(quantityColIndex));
-                        quizObject.setImageId(getResources().getIdentifier(
-                                c.getString(pictureColIndex), "raw", getPackageName()));
-                        ContentValues cv = new ContentValues();
-                        cv.put("wasShown", 1);
-                        String where = "title = '" + c.getString(titleColIndex) + "'";
-                        db.update("quiztable", cv, where, null);
-                    }
-                } else {
-                    initEndGame();
-                }
-            }
-                finally{
-                    c.close();
-                }
-            } catch (SQLiteException e) {
-                e.printStackTrace();
-            }
+    private void checkEndGame() {
+        if (quizObjectTop == null || quizObjectBottom == null){
+            initEndGame();
         }
+    }
+
+    //Read info from DB to quizObjectTop
+
     //Init all views and first screen
     private void initGameField() {
         textScore = (TextView) findViewById(R.id.textScore);
@@ -148,11 +99,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mTextMonthCaptionBottom = (TextView) findViewById(R.id.textMonthCaptionBottom);
         mTextMonthCaptionTop = (TextView) findViewById(R.id.textMonthCaptionTop);
 
-        imageViewTop.setImageResource(object1.getImageId());
-        imageViewBottom.setImageResource(object2.getImageId());
+        imageViewTop.setImageResource(quizObjectTop.getImageId());
+        imageViewBottom.setImageResource(quizObjectBottom.getImageId());
 
-        mTextViewTitleTop.setText(object1.getTitle());
-        mTextViewTitleBottom.setText(object2.getTitle());
+        mTextViewTitleTop.setText(quizObjectTop.getTitle());
+        mTextViewTitleBottom.setText(quizObjectBottom.getTitle());
         initAnim();
 
         mTextViewTitleTop.startAnimation(anim);
@@ -190,8 +141,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                imageViewBottom.setImageResource(object2.getImageId());
-                imageViewTop.setImageResource(object1.getImageId());
+                imageViewBottom.setImageResource(quizObjectBottom.getImageId());
+                imageViewTop.setImageResource(quizObjectTop.getImageId());
 
                 anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.scale_from_0_to_1);
                 anim.setAnimationListener(new Animation.AnimationListener() {
@@ -203,9 +154,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.scale_from_0_to_1);
-                        mTextViewTitleBottom.setText(object2.getTitle());
+                        mTextViewTitleBottom.setText(quizObjectBottom.getTitle());
                         mTextViewTitleBottom.startAnimation(anim);
-                        mTextViewTitleTop.setText(object1.getTitle());
+                        mTextViewTitleTop.setText(quizObjectTop.getTitle());
                         mTextViewTitleBottom.startAnimation(anim);
                     }
 
@@ -234,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                imageViewTop.setImageResource(object1.getImageId());
+                imageViewTop.setImageResource(quizObjectTop.getImageId());
 
                 anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.scale_from_0_to_1);
                 anim.setAnimationListener(new Animation.AnimationListener() {
@@ -246,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.scale_from_0_to_1);
-                        mTextViewTitleTop.setText(object1.getTitle());
+                        mTextViewTitleTop.setText(quizObjectTop.getTitle());
                         mTextViewTitleTop.startAnimation(anim);
                     }
 
@@ -311,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.imageViewTop:
-                if (object1.getNumberOfSearchQueries() > object2.getNumberOfSearchQueries()) {
+                if (quizObjectTop.getNumberOfSearchQueries() > quizObjectBottom.getNumberOfSearchQueries()) {
                     animationCorrect();
                 } else {
                     animationWrong();
@@ -319,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.imageViewBottom:
-                if (object2.getNumberOfSearchQueries() > object1.getNumberOfSearchQueries()) {
+                if (quizObjectBottom.getNumberOfSearchQueries() > quizObjectTop.getNumberOfSearchQueries()) {
                     animationCorrect();
                 } else animationWrong();
                 break;
@@ -358,8 +309,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onAnimationEnd(Animation animation) {
                         currentScore++;
 
-                        readDB(object1);
-                        readDB(object2);
+                        quizObjectTop = dbHelper.readDB();
+                        quizObjectBottom = dbHelper.readDB();
+                        checkEndGame();
                         updateGameField();
 
                     }
@@ -432,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //We start counting animation, that takes 1 second to complete. After that we start scaling from 0 to 1 animation
     private void startCountAnimation() {
 
-        ValueAnimator animator = ValueAnimator.ofInt(0, object2.getNumberOfSearchQueries());
+        ValueAnimator animator = ValueAnimator.ofInt(0, quizObjectBottom.getNumberOfSearchQueries());
         animator.setDuration(1000);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -443,7 +395,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mTextViewCounterBottom.startAnimation(anim);
         animator.start();
 
-        ValueAnimator animator1 = ValueAnimator.ofInt(0, object1.getNumberOfSearchQueries());
+        ValueAnimator animator1 = ValueAnimator.ofInt(0, quizObjectTop.getNumberOfSearchQueries());
         animator1.setDuration(1000);
         animator1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation1) {
@@ -457,59 +409,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private class DBHelper extends SQLiteOpenHelper {
-
-        public DBHelper(Context context) {
-            super(context, "quizDB", null, 1);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            db.execSQL("create table quiztable ("
-                    + "id integer primary key autoincrement,"
-                    + "title text,"
-                    + "quantity integer,"
-                    + "picture text,"
-                    + "wasShown integer"
-                    + ");");
-            fillDb(db);
-        }
-
-
-        @Override
-        public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
-        }
-    }
 //fill DB with info, taken from text file in assets dir
-    private void fillDb(SQLiteDatabase db) {
-        ContentValues cv = new ContentValues();
-        ArrayList<String> arrayList = new ArrayList<>();
-        arrayList = getArrayListFromAssetFile(this);
-
-        for (int i = 0; i < arrayList.size(); i++) {
-            String[] tempStringArray = arrayList.get(i).split(";");
-            cv.put("title", tempStringArray[0]);
-            cv.put("quantity", tempStringArray[1]);
-            cv.put("picture", tempStringArray[2]);
-            cv.put("wasShown", 0);
-            db.insert("quiztable", null, cv);
-        }
-
-    }
 //before game ends, we have to reset all shown cards in DB
-    private void resetWasShown() {
-        String selection = "wasShown == 1";
-        c = db.query("quiztable", null, selection, null, null, null, null);
-        ContentValues cv = new ContentValues();
-        cv.put("wasShown", 0);
-        if (c.moveToFirst()) {
-            do {
-                db.update("quiztable", cv, null, null);
-            } while (c.moveToNext());
-        }
-        c.close();
-    }
+
 //before game pauses, we have to save highscore
     private void saveHighScore() {
         SharedPreferences sharedPref = this.getSharedPreferences(
@@ -533,7 +435,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        resetWasShown();
+        dbHelper.resetWasShown();
     }
 //if player is wrong, ad screen is shown, after which end game activity starts.
     private void initEndGame() {
@@ -555,7 +457,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
         } else {
-
             saveHighScore();
             Intent intent = new Intent(MainActivity.this, WrongActivity.class);
             intent.putExtra(HIGHSCORE_EXTRA, highScore);
@@ -565,43 +466,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
-//return arraylist with data, that was obtained from text file in assets folder
-    private ArrayList<String> getArrayListFromAssetFile(Activity activity) {
-        AssetManager am = activity.getAssets();
-        InputStream is;
-        ArrayList<String> arrayList = new ArrayList<>();
-        try {
-            is = am.open(FILENAME);
-            arrayList = convertStreamToArrayList(is);
-            is.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return arrayList;
-    }
-//convert BufferedReader to arraylist
-    private static ArrayList<String> convertStreamToArrayList(InputStream is) {
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        ArrayList<String> arrayList = new ArrayList<>();
-
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                arrayList.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return arrayList;
-    }
-
 }
